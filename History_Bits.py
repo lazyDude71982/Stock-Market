@@ -54,7 +54,7 @@ class HB(BaseEstimator,ClassifierMixin):
     def predict(self,X):
         ypredict=[]
         for i in range(0,X.shape[0]):
-            ypredict.append(self._predictOnce(X.iloc[i,:]))
+            ypredict.append(self._predictOnce(X[i,:]))
         return np.array(ypredict)    
             
         
@@ -65,13 +65,17 @@ class HB(BaseEstimator,ClassifierMixin):
     def fit(self,X,y=None):
         self.forest=self.forest.fit(X,y)
         important=self.forest.feature_importances_
-        kvpair=list(zip(X.columns,important))
+        try:
+            X=X.to_numpy()
+        except:
+            X=X
+        kvpair=list(zip([i for i in range(0,X.shape[1])],important))
         kvpair=sorted(kvpair,key=lambda i:i[1],reverse=True)
         self._CreateGroups(kvpair)
         y=np.array(y)
         self.thresholds=[0 for i in range(0,len(self.Groups))]
         for i in range(0,X.shape[0]):
-            ypredict=self._predictOnce(X.iloc[i,:])
+            ypredict=self._predictOnce(X[i,:])
             if ypredict!=y[i]:
                 self.updateThreshold(ypredict,y[i])
         return self    
