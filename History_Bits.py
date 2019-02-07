@@ -7,6 +7,7 @@ Created on Fri Jan 25 18:10:11 2019
 from sklearn.base import BaseEstimator,ClassifierMixin
 from sklearn.ensemble import ExtraTreesClassifier
 import numpy as np
+import sys
 
 class HB(BaseEstimator,ClassifierMixin):
     def __init__(self,Num_of_group=2,group_size=2,learn_rate=1):
@@ -53,6 +54,7 @@ class HB(BaseEstimator,ClassifierMixin):
         
     def predict(self,X):
         ypredict=[]
+        X=np.array(X)
         for i in range(0,X.shape[0]):
             ypredict.append(self._predictOnce(X[i,:]))
         return np.array(ypredict)    
@@ -66,9 +68,10 @@ class HB(BaseEstimator,ClassifierMixin):
         self.forest=self.forest.fit(X,y)
         important=self.forest.feature_importances_
         try:
-            X=X.to_numpy()
+            X=np.array(X)
         except:
-            X=X
+            print("Oops!",sys.exc_info()[0],"occured.")
+            X=X    
         kvpair=list(zip([i for i in range(0,X.shape[1])],important))
         kvpair=sorted(kvpair,key=lambda i:i[1],reverse=True)
         self._CreateGroups(kvpair)
