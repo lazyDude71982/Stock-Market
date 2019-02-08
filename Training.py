@@ -33,7 +33,8 @@ def main():
     clf=HB(Num_of_group=6,group_size=2)
     #plot_learning_curve(clf,"Kya karu mai", X_scaled, y_train, ylim=(0.7, 1.01), cv=cv, n_jobs=4)
     #print(clf.thresholds)
-    scores=cross_val_score(clf,X_scaled,y_train,cv=20)
+
+    scores=cross_val_score(clf,X_scaled,y_train,cv=5)
     print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
     #plt.show()
 main()    

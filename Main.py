@@ -4,12 +4,6 @@ import numpy as np
 import os
 import math
 
-
-def load_stock(companyname=""):
-    csv_path = os.path.join('individual_stocks_5yr',companyname)
-    return pd.read_csv(csv_path)
-
-
 #indicator 1 Simple Moving Average
 def calculateSMA(data,window):
     ans=[]
@@ -60,9 +54,9 @@ def calculateRSI(A_data):
     dUp, dDown = delta.copy(), delta.copy()
     dUp[dUp < 0] = 0
     dDown[dDown > 0] = 0
-
-    RolUp = dUp.rolling(n).mean()
-    RolDown = dDown.rolling(n).mean()
+    alpha=1/n
+    RolUp = dUp.ema(alpha=alpha,adjust=False).mean()
+    RolDown = dDown.ema(alpha=alpha,adjust=False).mean()
 
     RS = RolUp / RolDown
     rsi = 100.0 - (100.0 / (1.0 + RS))
@@ -316,7 +310,7 @@ def find_up_down(data):
 
 
 def CalculateTI(companyname):
-    data = load_stock(companyname + ".csv")
+    data = pd.read_csv(companyname + ".csv")
     data = calculateSMA(data, 10)
     data = calculateWMA(data)
     data = calculateMomentum(data)
@@ -355,16 +349,16 @@ def splitme(data,df):
             if (pcount == 0 and ncount == 0 and pcount2 == 0 and ncount2 == 0):
                 j = i
                 break
-            if (pcount != 0 and df['Status'].iloc[i] == '+1'):
+            if (pcount != 0 and df['y'].iloc[i] == '+1'):
                 Training.loc[df.index[i]] = df.iloc[i]
                 pcount -= 1
-            elif (pcount2 != 0 and df['Status'].iloc[i] == '+1'):
+            elif (pcount2 != 0 and df['y'].iloc[i] == '+1'):
                 Holdout.loc[df.index[i]] = df.iloc[i]
                 pcount2 -= 1
-            elif (ncount != 0 and df['Status'].iloc[i] == '-1'):
+            elif (ncount != 0 and df['y'].iloc[i] == '-1'):
                 Training.loc[df.index[i]] = df.iloc[i]
                 ncount -= 1
-            elif (ncount2 != 0 and df['Status'].iloc[i] == '-1'):
+            elif (ncount2 != 0 and df['y'].iloc[i] == '-1'):
                 Holdout.loc[df.index[i]] = df.iloc[i]
                 ncount2 -= 1
             else:
@@ -416,9 +410,9 @@ def main():
     data=CalculateTI(companyname)
     data.to_csv(companyname + '_modified.csv', encoding='utf-8', index=False)
     distri(data)
+    print("Completed")
 
-
-    print("Main() Run Successfully")
+    #print(pd.show_versions())
 
 
 
