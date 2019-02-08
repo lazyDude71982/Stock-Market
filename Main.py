@@ -15,34 +15,34 @@ def find_up_down(data):
         else:
             up_down.append(str('-1'))
     data=data.iloc[1:]
-    return data.assign(Status=up_down)
+    return data.assign(y=up_down)
 
 
 def CalculateTI(companyname):
-    data = load_stock(companyname + ".csv")
+    data = pd.read_csv(companyname + ".csv")
     obj=finta.TA
 
-    data=data.assign(SMA=obj.SMA(data))
-    data=data.assign(EMA=obj.EMA(data))
-    data = data.assign(RSI=obj.RSI(data))
+    data=data.assign(SMA=obj.SMA(data,period=10))
+    data=data.assign(EMA=obj.EMA(data,period=10))
+    data=data.assign(RSI=obj.RSI(data))
     data=data.assign(CCI=obj.CCI(data))
     data=data.assign(KAMA=obj.KAMA(data))
-    data=data.assign(WMA=obj.WMA(data))
+    data=data.assign(WMA=obj.WMA(data,period=10))
     data=data.assign(HMA=obj.HMA(data))
 
     result=obj.MACD(data)
     data=data.assign(MACD=result['MACD'])
     data=data.assign(MOM=obj.MOM(data))
     data=data.assign(ATR=obj.ATR(data))
-    data = data.assign(STOCH=obj.STOCH(data))
-    data = data.assign(STOCHD=obj.STOCHD(data))
-    data = data.assign(STOCHRSI=obj.STOCHRSI(data))
-    data = data.assign(WILLIAMS=obj.WILLIAMS(data))
-    data = data.assign(TSI=obj.TSI(data)['TSI'])
-    data = data.assign(ADL=obj.ADL(data))
-    data = data.assign(CHAIKIN=obj.CHAIKIN(data))
-    data = data.assign(OBV=obj.OBV(data))
-    data = data.assign(CFI=obj.CFI(data))
+    data=data.assign(STOCH=obj.STOCH(data))
+    data=data.assign(STOCHD=obj.STOCHD(data))
+    data=data.assign(STOCHRSI=obj.STOCHRSI(data))
+    data=data.assign(WILLIAMS=obj.WILLIAMS(data))
+    data=data.assign(TSI=obj.TSI(data)['TSI'])
+    data=data.assign(ADL=obj.ADL(data))
+    data=data.assign(CHAIKIN=obj.CHAIKIN(data))
+    data=data.assign(OBV=obj.OBV(data))
+    data=data.assign(CFI=obj.CFI(data))
     data=data.assign(CMO=obj.CMO(data))
     data=data.assign(VPT=obj.VPT(data))
     return data
@@ -124,7 +124,7 @@ def distri(data):
 
 
 def main():
-    companyname=input("Enter Company name")
+    companyname="AAPL_data"
     data=CalculateTI(companyname)
     data=find_up_down(data)
     distri(data)
