@@ -321,7 +321,6 @@ def CalculateTI(companyname):
     data = load_stock(companyname + ".csv")
     data = calculateSMA(data, 10)
     data= data.assign(ta.WMA(data,10))
-    data = calculateWMA(data)
     data = calculateMomentum(data)
     data = data.assign(ta.RSI(data))
     data = calculateWilliam(data)
