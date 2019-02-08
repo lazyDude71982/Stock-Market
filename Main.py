@@ -1,16 +1,9 @@
 import pandas as pd
-import matplotlib.pyplot as mp
 import numpy as np
-import os
 import math
 import finta as finta
 
-def load_stock(companyname=""):
-    csv_path = os.path.join('individual_stocks_5yr',companyname)
-    return pd.read_csv(csv_path)
-
-
-#indicator 1 Simple Moving Average
+# indicator 1 Simple Moving Average
 def calculateSMA(data,window):
     ans=[]
     values=np.asarray(data['close'])
@@ -22,7 +15,7 @@ def calculateSMA(data,window):
     return data.assign(SMA=ans)
 
 
-#indicator 2 Weighted Moving Average
+# indicator 2 Weighted Moving Average
 def calculateWMA(A_data):
     WMA=[]
     num=0;
@@ -37,7 +30,7 @@ def calculateWMA(A_data):
             WMA.append(SUM/num)
     return A_data.assign(WMA=WMA)
 
-#indicator 3 Momentum
+# indicator 3 Momentum
 def calculateMomentum(data):
     Mom=[]
     for i in range(data.shape[0]):
@@ -47,7 +40,7 @@ def calculateMomentum(data):
             Mom.append(data['close'][i-9]-data['close'][i])
     return data.assign(Momentum=Mom)
 
-#indicator 4 Relative Strength Index
+# indicator 4 Relative Strength Index
 def calculateRSI(A_data):
     n = 14
     delta = A_data['close'].diff()
@@ -165,7 +158,6 @@ def calculateCCI(A_data):
 #indicator 8 Accumulation Distribbution Line
 def acc_dist(data):
     trend_periods=21
-    ad=[]
     for x in range (0,data.shape[0]):
         if(data['high'][x]!=data['low'][x]):
             ac=((data['close'][x]-data['low'][x])-(data['high'][x]-data['close'][x]))/(data['high'][x]-data['low'][x]) * \
@@ -318,11 +310,11 @@ def find_up_down(data):
 def CalculateTI(companyname):
     ta=finta.TA
 
-    data = load_stock(companyname + ".csv")
+    data = pd.read_csv(companyname + ".csv")
     data = calculateSMA(data, 10)
-    data= data.assign(ta.WMA(data,10))
+    data= data.assign(WMA=ta.WMA(data,10))
     data = calculateMomentum(data)
-    data = data.assign(ta.RSI(data))
+    data = data.assign(RSI=ta.RSI(data))
     data = calculateWilliam(data)
     data = calculateMACD(data)
     data = calculateCCI(data)
@@ -418,8 +410,6 @@ def main():
     data=CalculateTI(companyname)
     data.to_csv(companyname + '_modified.csv', encoding='utf-8', index=False)
     distri(data)
-
-
     print("Main() Run Successfully")
 
 
