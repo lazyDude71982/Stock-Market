@@ -26,10 +26,10 @@ def CalculateTI(companyname):
     data = load_stock(companyname + ".csv")
     obj=finta.TA
 
-    data=data.assign(SMA=obj.SMA(data))
-    data=data.assign(EMA=obj.EMA(data))
-    data = data.assign(RSI=obj.RSI(data))
-    data=data.assign(CCI=obj.CCI(data))
+    data=data.assign(SMA=obj.SMA(data,10))
+    data=data.assign(EMA=obj.EMA(data,10))
+    data = data.assign(RSI=obj.RSI(data,14))
+    data=data.assign(CCI=obj.CCI(data,20))
     data=data.assign(KAMA=obj.KAMA(data))
     data=data.assign(WMA=obj.WMA(data))
     data=data.assign(HMA=obj.HMA(data))
